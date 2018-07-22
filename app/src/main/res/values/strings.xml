@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ProjectInit</string>
+    <string name="network_connect_error">请检查网络是否连接</string>
+    <string name="request_api_failed">请求数据失败</string>
 </resources>
