@@ -3,6 +3,7 @@ package cn.com.woong.projectinit.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -15,9 +16,11 @@ import cn.com.woong.projectinit.R;
 /**
  * @author wong
  */
-public abstract class BaseActivity extends RxAppCompatActivity implements BaseContract.BaseView {
+public abstract class BaseActivity<T extends BaseContract.BasePresenter> extends RxAppCompatActivity implements BaseContract.BaseView {
     KProgressHUD mKProgressHUD;
     private Unbinder unbinder;
+
+    protected T mPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,6 +28,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements BaseCo
         int layoutId = getLayoutId();
         setContentView(layoutId);
         unbinder = ButterKnife.bind(this);
+        attachView();
         initView();
         initData();
     }
@@ -34,6 +38,25 @@ public abstract class BaseActivity extends RxAppCompatActivity implements BaseCo
     protected abstract void initView();
 
     protected abstract void initData();
+
+
+    /**
+     * 分离view
+     */
+    private void detachView() {
+        if (mPresenter != null) {
+            mPresenter.detachView();
+        }
+    }
+
+    /**
+     * 贴上view
+     */
+    private void attachView() {
+        if (mPresenter != null) {
+            mPresenter.attachView(this);
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -47,6 +70,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements BaseCo
     protected void onDestroy() {
         super.onDestroy();
         unbinder.unbind();
+        detachView();
     }
 
     @Override

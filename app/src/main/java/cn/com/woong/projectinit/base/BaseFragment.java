@@ -17,10 +17,12 @@ import cn.com.woong.projectinit.R;
 /**
  * @author wong
  */
-public abstract class BaseFragment extends RxFragment implements BaseContract.BaseView {
+public abstract class BaseFragment<T extends BaseContract.BasePresenter> extends RxFragment implements BaseContract.BaseView {
     private Unbinder unbinder;
     private View mRootView, mErrorView, mEmptyView;
     private KProgressHUD mKProgressHUD;
+
+    protected T mPresenter;
 
     protected abstract int getLayoutId();
 
@@ -28,12 +30,28 @@ public abstract class BaseFragment extends RxFragment implements BaseContract.Ba
 
     protected abstract void initData();
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!NetworkUtils.isConnected()) {
-            showNoNet();
+    /**
+     * 分离view
+     */
+    private void detachView() {
+        if (mPresenter != null) {
+            mPresenter.detachView();
         }
+    }
+
+    /**
+     * 贴上view
+     */
+    private void attachView() {
+        if (mPresenter != null) {
+            mPresenter.attachView(this);
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        attachView();
     }
 
     @Nullable
@@ -52,9 +70,18 @@ public abstract class BaseFragment extends RxFragment implements BaseContract.Ba
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (!NetworkUtils.isConnected()) {
+            showNoNet();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         unbinder.unbind();
+        detachView();
     }
 
     @Override
