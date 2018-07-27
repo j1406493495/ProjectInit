@@ -28,8 +28,8 @@ public abstract class BaseActivity<T extends BaseContract.BasePresenter> extends
         int layoutId = getLayoutId();
         setContentView(layoutId);
         unbinder = ButterKnife.bind(this);
-        attachView();
         initView();
+        attachView();
         initData();
     }
 
