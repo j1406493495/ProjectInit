@@ -29,8 +29,8 @@ public abstract class BaseActivity<T extends BaseContract.BasePresenter> extends
         setContentView(layoutId);
         unbinder = ButterKnife.bind(this);
         initView();
-        attachView();
         initData();
+        attachView();
     }
 
     protected abstract int getLayoutId();
