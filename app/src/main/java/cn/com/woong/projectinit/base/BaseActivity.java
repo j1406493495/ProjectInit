@@ -2,6 +2,7 @@ package cn.com.woong.projectinit.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.NetworkUtils;
@@ -16,11 +17,9 @@ import cn.com.woong.projectinit.R;
 /**
  * @author wong
  */
-public abstract class BaseActivity<T extends BaseContract.BasePresenter> extends RxAppCompatActivity implements BaseContract.BaseView {
+public abstract class BaseActivity extends AppCompatActivity {
     KProgressHUD mKProgressHUD;
     private Unbinder unbinder;
-
-    protected T mPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,7 +29,6 @@ public abstract class BaseActivity<T extends BaseContract.BasePresenter> extends
         unbinder = ButterKnife.bind(this);
         initView();
         initData();
-        attachView();
     }
 
     protected abstract int getLayoutId();
@@ -38,25 +36,6 @@ public abstract class BaseActivity<T extends BaseContract.BasePresenter> extends
     protected abstract void initView();
 
     protected abstract void initData();
-
-
-    /**
-     * 分离view
-     */
-    private void detachView() {
-        if (mPresenter != null) {
-            mPresenter.detachView();
-        }
-    }
-
-    /**
-     * 贴上view
-     */
-    private void attachView() {
-        if (mPresenter != null) {
-            mPresenter.attachView(this);
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -70,10 +49,8 @@ public abstract class BaseActivity<T extends BaseContract.BasePresenter> extends
     protected void onDestroy() {
         super.onDestroy();
         unbinder.unbind();
-        detachView();
     }
 
-    @Override
     public void showLoading() {
         mKProgressHUD = KProgressHUD.create(this);
         mKProgressHUD.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
@@ -83,33 +60,24 @@ public abstract class BaseActivity<T extends BaseContract.BasePresenter> extends
                 .show();
     }
 
-    @Override
     public void hideLoading() {
         if (mKProgressHUD != null) {
             mKProgressHUD.dismiss();
         }
     }
 
-    @Override
     public void showSuccess() {
     }
 
-    @Override
     public void showFailed() {
         ToastUtils.showShort(R.string.request_api_failed);
     }
 
-    @Override
     public void showNoNet() {
         ToastUtils.showShort(R.string.network_connect_error);
     }
 
-    @Override
     public void onRetry() {
     }
 
-    @Override
-    public <T> LifecycleTransformer<T> bindToLife() {
-        return this.bindToLifecycle();
-    }
 }
