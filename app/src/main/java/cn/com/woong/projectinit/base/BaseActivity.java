@@ -18,6 +18,8 @@ import cn.com.woong.projectinit.R;
  * @author wong
  */
 public abstract class BaseActivity extends AppCompatActivity {
+    protected final String TAG = getClass().getSimpleName();
+
     KProgressHUD mKProgressHUD;
     private Unbinder unbinder;
 

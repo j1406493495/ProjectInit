@@ -19,6 +19,8 @@ import cn.com.woong.projectinit.R;
  * @author wong
  */
 public abstract class BaseFragment extends Fragment {
+    protected final String TAG = getClass().getSimpleName();
+
     private Unbinder unbinder;
     private View mRootView, mErrorView, mEmptyView;
     private KProgressHUD mKProgressHUD;
